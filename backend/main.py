@@ -10,7 +10,10 @@ from db.sessoin import engine
 from core.config import get_settings
 from api.routers.task import router as task_router
 from api.routers.category import router as category_router
+from dotenv import load_dotenv
 
+
+load_dotenv()
 settings = get_settings()
 
 @asynccontextmanager

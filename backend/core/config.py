@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+import os
+
+
 
 @dataclass(frozen=True)
 class Settings:
@@ -7,8 +10,15 @@ class Settings:
 
 
 def get_settings():
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL not set in environment variables")
+    
+    origins_str = os.getenv("CORS_ORIGINS", "http://localhost:3000")
+    origins_list = [origin.strip() for origin in origins_str.split(",")]
+    
     return Settings(
-        DATABASE_URL= "postgresql+psycopg://postgres:admin@127.0.0.1:5432/postgres",
-        allow_origins=["http://localhost:3000"]
+        DATABASE_URL=database_url,
+        allow_origins=origins_list
     )
 
