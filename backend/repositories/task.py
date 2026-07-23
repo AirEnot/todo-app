@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import select 
 from models.task import TaskORM
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
 
 class TaskReposytory:
     def __init__(self, db: Session) -> None:
@@ -8,7 +9,7 @@ class TaskReposytory:
 
     def get_all(self) -> list[TaskORM]:
         return list(self.db.scalars(select(TaskORM)).all())
-    
+
     def get_by_id(self, task_id: str) -> TaskORM:
         task = self.db.get(TaskORM, task_id)
         if task is None:
@@ -18,12 +19,7 @@ class TaskReposytory:
     def create(self, title: str) -> TaskORM:
         new_task = TaskORM(title=title, completed=False)
         self.db.add(new_task)
-        return new_task 
-    
+        return new_task
+
     def delete(self, task: TaskORM) -> None:
         self.db.delete(task)
-    
-
-    
-
-

@@ -1,11 +1,10 @@
-from sqlalchemy.orm import Session
-
 from repositories.task import TaskReposytory
 from schemas.task import TaskCreateSchema, TaskSchema, TaskUpdateSchema
+from sqlalchemy.orm import Session
 
 
 class TaskService:
-    def __init__ (self, db: Session):
+    def __init__(self, db: Session):
         self.db = db
         self.task_repository = TaskReposytory(db)
 
@@ -17,10 +16,10 @@ class TaskService:
         task_orm = self.task_repository.create(title=task_create.title)
         self.db.commit()
         return TaskSchema.model_validate(task_orm)
-    
+
     def update_task(self, task_id: str, task_to_update: TaskUpdateSchema) -> TaskSchema:
         task_orm = self.task_repository.get_by_id(task_id=task_id)
-        
+
         if task_to_update.title is not None:
             task_orm.title = task_to_update.title
 

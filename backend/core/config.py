@@ -1,6 +1,9 @@
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 @dataclass(frozen=True)
@@ -13,12 +16,8 @@ def get_settings():
     database_url = os.getenv("DATABASE_URL")
     if not database_url:
         raise ValueError("DATABASE_URL not set in environment variables")
-    
+
     origins_str = os.getenv("CORS_ORIGINS", "http://localhost:3000")
     origins_list = [origin.strip() for origin in origins_str.split(",")]
-    
-    return Settings(
-        DATABASE_URL=database_url,
-        allow_origins=origins_list
-    )
 
+    return Settings(DATABASE_URL=database_url, allow_origins=origins_list)
