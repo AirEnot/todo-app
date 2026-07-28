@@ -8,14 +8,14 @@ from services.task import TaskService
 
 
 def test_list_tasks_returns_pydantic_models(
-    service: TaskService, repository_mock: Mock
+    task_service: TaskService, task_repository_mock: Mock
 ) -> None:
-    repository_mock.get_all.return_value = [
+    task_repository_mock.get_all.return_value = [
         TaskORM(id="1", title="Задача 1", completed=False),
         TaskORM(id="2", title="Задача 2", completed=True),
     ]
 
-    result = service.list_tasks()
+    result = task_service.list_tasks()
 
     assert result == [
         TaskSchema(id="1", title="Задача 1", completed=False),
@@ -24,16 +24,16 @@ def test_list_tasks_returns_pydantic_models(
 
 
 def test_servise_create_task(
-    service: TaskService, repository_mock: Mock, db_mock: Mock
+    task_service: TaskService, task_repository_mock: Mock, db_mock: Mock
 ) -> None:
     created_task = TaskCreateSchema(title="Новая задача")
-    repository_mock.create.return_value = TaskORM(
+    task_repository_mock.create.return_value = TaskORM(
         id="1", title="Новая задача", completed=False
     )
 
-    result = service.create_task(created_task)
+    result = task_service.create_task(created_task)
 
-    repository_mock.create.assert_called_once_with(title="Новая задача")
+    task_repository_mock.create.assert_called_once_with(title="Новая задача")
     db_mock.commit.assert_called_once()
 
     assert result == TaskSchema(
@@ -54,19 +54,19 @@ def test_servise_create_task(
     ],
 )
 def test_update_task_updates_only_passed_fields(
-    service: TaskService,
+    task_service: TaskService,
     db_mock: Mock,
-    repository_mock: Mock,
+    task_repository_mock: Mock,
     payload: TaskUpdateSchema,
     expected_title: str,
     expected_completed: bool,
 ) -> None:
     task = TaskORM(id="1", title="Задача", completed=False)
-    repository_mock.get_by_id.return_value = task
+    task_repository_mock.get_by_id.return_value = task
 
-    result = service.update_task(task_id="1", task_to_update=payload)
+    result = task_service.update_task(task_id="1", task_to_update=payload)
 
-    repository_mock.get_by_id.assert_called_once_with(task_id="1")
+    task_repository_mock.get_by_id.assert_called_once_with(task_id="1")
     db_mock.commit.assert_called_once()
 
     assert result == TaskSchema(
@@ -75,12 +75,12 @@ def test_update_task_updates_only_passed_fields(
 
 
 def test_update_task_raises_task_not_found_error(
-    service: TaskService, db_mock: Mock, repository_mock: Mock
+    task_service: TaskService, db_mock: Mock, task_repository_mock: Mock
 ) -> None:
-    repository_mock.get_by_id.return_value = None
+    task_repository_mock.get_by_id.return_value = None
 
     with pytest.raises(TaskNotFoundError):
-        service.update_task(
+        task_service.update_task(
             task_id="1", task_to_update=TaskUpdateSchema(title="Unknown task")
         )
 

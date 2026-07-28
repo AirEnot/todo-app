@@ -26,7 +26,7 @@ def update_category(
     payload: CategoryUdpateSchema,
     category_service: CategoryService = Depends(get_category_service),
 ):
-    return category_service.update_categoty(id=category_id, category_update=payload)
+    return category_service.update_category(id=category_id, category_update=payload)
 
 
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
